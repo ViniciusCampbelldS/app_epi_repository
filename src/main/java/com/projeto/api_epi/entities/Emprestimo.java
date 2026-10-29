@@ -1,0 +1,37 @@
+//O empréstimo liga um funcionário a um EPI. A anotação @ManyToOne significa: muitos empréstimos para um mesmo funcionário, e muitos empréstimos para um mesmo EPI.
+package com.projeto.api_epi.entities;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Emprestimo {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "funcionario_id")
+	private Funcionario funcionario;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "epi_id")
+	private Epi epi;
+
+	@Column(nullable = false)
+	private LocalDate dataEmprestimo;
+
+	private LocalDate dataDevolucao;
+
+	@Column(nullable = false, length = 15)
+	private String status;
+}
