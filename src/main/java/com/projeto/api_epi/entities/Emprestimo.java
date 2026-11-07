@@ -34,4 +34,8 @@ public class Emprestimo {
 
 	@Column(nullable = false, length = 15)
 	private String status;
+
+	// Da aula 10 (4) observação ou motivo adicionado pelo usuário para troca
+	@Column (length = 200)
+	private String observacao;
 }
