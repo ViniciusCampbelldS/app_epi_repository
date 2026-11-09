@@ -49,10 +49,18 @@ public class EmprestimoService {
 			throw new IllegalArgumentException("EPI sem estoque disponível. ");
 		}
 
+		// 1. Verifica se já existe uma solicitação pendente
 		boolean jaSolicitou = emprestimoRepository.existsByFuncionarioIdAndEpiIdAndStatus(funcionario.getId(), epi.getId(), "SOLICITADO");
 
 		if (jaSolicitou) {
 			throw new IllegalArgumentException("Você já tem uma solicitação aberta para este EPI. ");
+		}
+
+		// 2. DESAFIO EXTRA: Verifica se o funcionário já está com o EPI emprestado ativamente
+		boolean jaEmprestado = emprestimoRepository.existsByFuncionarioIdAndEpiIdAndStatus(funcionario.getId(), epi.getId(), "EMPRESTADO");
+
+		if (jaEmprestado) {
+			throw new IllegalArgumentException("Você já possui este EPI em uso e ainda não o devolveu. ");
 		}
 
 		// 4. A API decide estes campos (não confiamos no que veio do app)
