@@ -21,7 +21,9 @@ public class WebConfig implements WebMvcConfigurer {
 	// Disponibiliza imagens da pasta static/imagens
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/imagens/**")
-				.addResourceLocations("classpath:/static/imagens/");
+		registry.addResourceHandler("/imagens/**").addResourceLocations("classpath:/static/imagens/");
+
+		// NOVO na Aula 6: materiais dos treinamentos (PDF)
+		registry.addResourceHandler("/documentos/**").addResourceLocations("classpath:/static/documentos/");
 	}
 }
