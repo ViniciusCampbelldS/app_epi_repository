@@ -27,4 +27,7 @@ public class Treinamento {
 	// /arquivos/nr06.pdf
 	@Column(length = 200)
 	private String arquivoUrl;
+
+	// Meses de validade do treinamento (reciclagem). Nulo = nao vence.
+	private Integer validadeMeses;
 }

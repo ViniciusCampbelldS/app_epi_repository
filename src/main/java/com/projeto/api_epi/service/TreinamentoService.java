@@ -17,13 +17,16 @@ public class TreinamentoService {
 	private final TreinamentoRepository treinamentoRepository;
 	private final TreinamentoRealizadoRepository realizadoRepository;
 	private final FuncionarioRepository funcionarioRepository;
+	private final AcessoService acessoService;
 
 	public TreinamentoService(TreinamentoRepository treinamentoRepository,
 							  TreinamentoRealizadoRepository realizadoRepository,
-							  FuncionarioRepository funcionarioRepository) {
+							  FuncionarioRepository funcionarioRepository,
+							  AcessoService acessoService) {
 		this.treinamentoRepository = treinamentoRepository;
 		this.realizadoRepository = realizadoRepository;
 		this.funcionarioRepository = funcionarioRepository;
+		this.acessoService = acessoService;
 	}
 
 	public List<Treinamento> listar() {
@@ -32,7 +35,7 @@ public class TreinamentoService {
 
 	// Só o administrador cadastra treinamentos
 	public Treinamento cadastrar(Treinamento treinamento, Long adminId) {
-		verificarAdmin(adminId);
+		acessoService.verificarAdmin(adminId);
 
 		if (treinamento.getTitulo() == null
 				|| treinamento.getTitulo().isBlank()) {
@@ -55,11 +58,18 @@ public class TreinamentoService {
 				.orElseThrow(() ->
 						new IllegalArgumentException("Treinamento não encontrado"));
 
-		boolean jaConcluiu = realizadoRepository
-				.existsByFuncionarioIdAndTreinamentoId(
-						funcionario.getId(), treinamento.getId());
+		// Só bloqueia se a última conclusão ainda estiver válida
+		boolean aindaValido = realizadoRepository
+				.findByFuncionarioIdOrderByDataConclusaoDesc(funcionario.getId())
+				.stream()
+				.filter(r -> r.getTreinamento().getId().equals(treinamento.getId()))
+				.findFirst()
+				.map(r -> treinamento.getValidadeMeses() == null
+						|| LocalDate.now().isBefore(
+								r.getDataConclusao().plusMonths(treinamento.getValidadeMeses())))
+				.orElse(false);
 
-		if (jaConcluiu) {
+		if (aindaValido) {
 			throw new IllegalArgumentException(
 					"Este treinamento já foi concluído");
 		}
@@ -75,18 +85,5 @@ public class TreinamentoService {
 	public List<TreinamentoRealizado> listarRealizados(Long funcionarioId) {
 		return realizadoRepository
 				.findByFuncionarioIdOrderByDataConclusaoDesc(funcionarioId);
-	}
-
-	// Mesmo controle de acesso da Aula 5
-	private void verificarAdmin(Long adminId) {
-		Funcionario usuario = funcionarioRepository
-				.findById(adminId)
-				.orElseThrow(() ->
-						new SecurityException("Usuário não encontrado"));
-
-		if (!"ADMIN".equals(usuario.getPerfil())) {
-			throw new SecurityException(
-					"Apenas administradores podem fazer esta operação");
-		}
 	}
 }
