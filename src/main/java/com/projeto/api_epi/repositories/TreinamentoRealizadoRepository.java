@@ -13,6 +13,9 @@ public interface TreinamentoRealizadoRepository
 		Long funcionarioId
 	);
 
+	// Quantos treinamentos o funcionário concluiu
+	long countByFuncionarioId(Long funcionarioId);
+
 	// Este funcionário já concluiu este treinamento?
 	boolean existsByFuncionarioIdAndTreinamentoId(
 		Long funcionarioId,

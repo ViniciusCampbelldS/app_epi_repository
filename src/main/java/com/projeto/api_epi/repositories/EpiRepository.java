@@ -8,4 +8,7 @@ public interface EpiRepository extends JpaRepository<Epi, Long> {
 
 	// NOVO na Aula 7: quantos EPIs têm a validade do CA antes da data
 	long countByValidadeCaBefore(LocalDate data);
+
+	// Exercício da Aula 7: EPIs com estoque igual ou abaixo do limite
+	long countByQuantidadeDisponivelLessThanEqual(int limite);
 }

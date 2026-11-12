@@ -48,6 +48,23 @@ public class DashboardService {
 		dados.put("caVencidos", epiRepository.countByValidadeCaBefore(LocalDate.now()));
 		dados.put("solicitacoesPendentes", emprestimoRepository.countByStatus("SOLICITADO"));
 		dados.put("treinamentosPendentes", pendentes);
+		dados.put("funcionariosCadastrados", funcionarioRepository.count());
+		dados.put("estoqueBaixo", epiRepository.countByQuantidadeDisponivelLessThanEqual(2));
+		return dados;
+	}
+
+	// Painel do funcionário: qualquer usuário existente pode ver os próprios números
+	public Map<String, Long> indicadoresFuncionario(Long funcionarioId) {
+		funcionarioRepository.findById(funcionarioId)
+				.orElseThrow(() -> new SecurityException("Usuário não encontrado"));
+
+		long pendentes = treinamentoRepository.count()
+				- realizadoRepository.countByFuncionarioId(funcionarioId);
+
+		Map<String, Long> dados = new LinkedHashMap<>();
+		dados.put("episEmUso", emprestimoRepository
+				.countByFuncionarioIdAndStatus(funcionarioId, "EMPRESTADO"));
+		dados.put("treinamentosPendentes", pendentes);
 		return dados;
 	}
 }

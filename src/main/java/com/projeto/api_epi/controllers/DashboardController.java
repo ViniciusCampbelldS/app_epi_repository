@@ -27,4 +27,14 @@ public class DashboardController {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
 		}
 	}
+
+	// GET /dashboard/funcionario?funcionarioId=2 -> indicadores do próprio funcionário
+	@GetMapping("/funcionario")
+	public ResponseEntity<?> indicadoresFuncionario(@RequestParam Long funcionarioId) {
+		try {
+			return ResponseEntity.ok(service.indicadoresFuncionario(funcionarioId));
+		} catch (SecurityException e) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+		}
+	}
 }
