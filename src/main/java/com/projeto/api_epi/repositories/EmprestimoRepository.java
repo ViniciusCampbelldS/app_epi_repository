@@ -16,4 +16,7 @@ public interface EmprestimoRepository extends JpaRepository<Emprestimo, Long> {
 			String status
 	);
 
+	// NOVO na Aula 7: quantos empréstimos estão com este status
+	long countByStatus(String status);
+
 }
